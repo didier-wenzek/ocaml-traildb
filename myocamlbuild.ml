@@ -2,7 +2,7 @@ open Ocamlbuild_plugin ;;
 
 let _ = dispatch begin function
     | After_rules ->
-        ocaml_lib "traildb";
+        ocaml_lib "trailDB";
 
         flag ["ocamlmklib"; "c"; "use_libtraildb"] (S[A"-ltraildb"]);
         flag ["link"; "ocaml"; "use_libtraildb"] (S[A"-cclib"; A"-ltraildb"]);

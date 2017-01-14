@@ -24,7 +24,7 @@ type field_value = string
 val tdb_cons_open: path -> field_name list -> tdb_cons
 
 (* Add an event to TrailDB. *)
-val tdb_cons_add: path -> uuid -> timestamp -> field_value list -> unit
+val tdb_cons_add: tdb_cons -> uuid -> timestamp -> field_value list -> unit
 
 (* Finalize TrailDB construction, creating a valid TrailDB file *)
 val tdb_cons_finalize: tdb_cons -> unit

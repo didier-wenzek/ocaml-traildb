@@ -2,4 +2,4 @@
 <trailDB.cma>: use_ocaml_traildb, use_libtraildb
 <trailDB.cmxa>: use_ocaml_traildb
 <trailDB.cmxs>: use_ocaml_traildb, link_libtraildb
-<*.native> : use_traildb, use_libtraildb
+<*.native> : use_trailDB, use_libtraildb
