@@ -88,5 +88,6 @@ external tdb_get_trail: tdb_cursor -> trail_id -> unit = "ocaml_tdb_get_trail"
 external tdb_get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length"
 external tdb_cursor_next: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_next"
 external tdb_cursor_peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
-external tdb_event_filter_new: conjunction -> tdb_event_filter = "ocaml_tdb_event_filter_new"
 external tdb_error_str: error -> string = "ocaml_tdb_error_str"
+
+let tdb_event_filter_new conjunction = raise (Invalid_argument "TODO")

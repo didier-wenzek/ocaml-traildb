@@ -104,3 +104,153 @@ value ocaml_tdb_error_str(value caml_err) {
   CAMLreturn(caml_msg);
 }
 
+extern CAMLprim
+value ocaml_tdb_cons_open(value caml_path, value caml_fields) {
+  CAMLparam2(caml_path, caml_fields);
+  CAMLlocal1(caml_tdb_cons);
+
+  CAMLreturn(caml_tdb_cons);
+}
+
+extern CAMLprim
+value ocaml_tdb_cons_add(value caml_tdb_cons, value caml_uuid, value caml_timestamp, value caml_values) {
+  CAMLparam4(caml_tdb_cons, caml_uuid, caml_timestamp, caml_values);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_cons_append(value caml_tdb_cons, value caml_tdb) {
+  CAMLparam2(caml_tdb_cons, caml_tdb);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_cons_finalize(value caml_tdb_cons) {
+  CAMLparam1(caml_tdb_cons);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_cons_close(value caml_tdb_cons) {
+  CAMLparam1(caml_tdb_cons);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_open(value caml_path) {
+  CAMLparam1(caml_path);
+  CAMLlocal1(caml_tdb);
+
+  CAMLreturn(caml_tdb);
+}
+
+extern CAMLprim
+value ocaml_tdb_close(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_dontneed(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_willneed(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_num_trails(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  CAMLlocal1(caml_num);
+
+  CAMLreturn(caml_num);
+}
+
+extern CAMLprim
+value ocaml_tdb_num_events(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  CAMLlocal1(caml_num);
+
+  CAMLreturn(caml_num);
+}
+
+extern CAMLprim
+value ocaml_tdb_num_fields(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  CAMLlocal1(caml_num);
+
+  CAMLreturn(caml_num);
+}
+
+extern CAMLprim
+value ocaml_tdb_min_timestamp(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  CAMLlocal1(caml_timestamp);
+
+  CAMLreturn(caml_timestamp);
+}
+
+extern CAMLprim
+value ocaml_tdb_max_timestamp(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  CAMLlocal1(caml_timestamp);
+
+  CAMLreturn(caml_timestamp);
+}
+
+extern CAMLprim
+value ocaml_tdb_cursor_new(value caml_tdb) {
+  CAMLparam1(caml_tdb);
+  CAMLlocal1(caml_cursor);
+
+  CAMLreturn(caml_cursor);
+}
+
+extern CAMLprim
+value ocaml_tdb_cursor_free(value caml_cursor) {
+  CAMLparam1(caml_cursor);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_get_trail(value caml_cursor, value caml_trail) {
+  CAMLparam2(caml_cursor, caml_trail);
+  
+  CAMLreturn(Val_unit);
+}
+
+extern CAMLprim
+value ocaml_tdb_get_trail_length(value caml_cursor) {
+  CAMLparam1(caml_cursor);
+  CAMLlocal1(caml_num);
+
+  CAMLreturn(caml_num);
+}
+
+extern CAMLprim
+value ocaml_tdb_cursor_next(value caml_cursor) {
+  CAMLparam1(caml_cursor);
+  CAMLlocal1(caml_event_option);
+
+  CAMLreturn(caml_event_option);
+}
+
+extern CAMLprim
+value ocaml_tdb_cursor_peek(value caml_cursor) {
+  CAMLparam1(caml_cursor);
+  CAMLlocal1(caml_event_option);
+
+  CAMLreturn(caml_event_option);
+}
