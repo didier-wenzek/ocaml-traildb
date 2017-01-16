@@ -4,13 +4,12 @@
 #include <caml/callback.h>
 #include <caml/fail.h>
 #include <caml/alloc.h>
-#include <string.h>
-#include <caml/memory.h>
-#include <caml/mlvalues.h>
-#include <caml/callback.h>
-#include <caml/fail.h>
-#include <caml/alloc.h>
+#include <caml/custom.h>
 #include <traildb.h>
+
+/* -------------------- */
+/* Working with errors. */
+/* -------------------- */
 
 /* Must be synchronized with TrailDB.error. */
 static int const ERROR_CODES[] = {
@@ -104,10 +103,67 @@ value ocaml_tdb_error_str(value caml_err) {
   CAMLreturn(caml_msg);
 }
 
+/* --------------------------------------- */
+/* Custom wrappers and operations.         */
+/* --------------------------------------- */
+
+#define Tdb_cons_val(v) (*((tdb_cons **) Data_custom_val(v)))
+
+static void tdb_cons_custom_finalize(value v) {
+  tdb_cons *tdb = Tdb_cons_val(v);
+  if (tdb) tdb_cons_close(tdb);
+}
+
+static struct custom_operations tdb_cons_operations = {
+  "tdb_cons",
+  tdb_cons_custom_finalize,
+  custom_compare_default,
+  custom_compare_ext_default,
+  custom_hash_default,
+  custom_serialize_default,
+  custom_deserialize_default
+};
+
+static value alloc_tdb_cons_wrapper (tdb_cons* tdb) {
+  value v = alloc_custom(&tdb_cons_operations, sizeof(tdb_cons*), 0, 1);
+  Tdb_cons_val(v) = tdb;
+  return v;
+}
+
+#define Tdb_val(v) (*((struct _tdb **) Data_custom_val(v)))
+
+static void tdb_custom_finalize(value v) {
+  tdb *tdb = Tdb_val(v);
+  if (tdb) tdb_close(tdb);
+}
+
+static struct custom_operations tdb_operations = {
+  "tdb",
+  tdb_custom_finalize,
+  custom_compare_default,
+  custom_compare_ext_default,
+  custom_hash_default,
+  custom_serialize_default,
+  custom_deserialize_default
+};
+
+static value alloc_tdb_wrapper (tdb* tdb) {
+  value v = alloc_custom(&tdb_operations, sizeof(tdb), 0, 1);
+  Tdb_val(v) = tdb;
+  return v;
+}
+
+/* --------------------------------------- */
+/* Working with TrailDB database builders. */
+/* --------------------------------------- */
+
 extern CAMLprim
 value ocaml_tdb_cons_open(value caml_path, value caml_fields) {
   CAMLparam2(caml_path, caml_fields);
   CAMLlocal1(caml_tdb_cons);
+
+  tdb_cons* tdb = tdb_cons_init();
+  caml_tdb_cons = alloc_tdb_cons_wrapper(tdb);
 
   CAMLreturn(caml_tdb_cons);
 }
@@ -130,6 +186,10 @@ extern CAMLprim
 value ocaml_tdb_cons_finalize(value caml_tdb_cons) {
   CAMLparam1(caml_tdb_cons);
   
+  tdb_cons *tdb = Tdb_cons_val(caml_tdb_cons);
+  tdb_error err = tdb_cons_finalize(tdb);
+  if (err) raise_exception(err);
+
   CAMLreturn(Val_unit);
 }
 
@@ -137,13 +197,24 @@ extern CAMLprim
 value ocaml_tdb_cons_close(value caml_tdb_cons) {
   CAMLparam1(caml_tdb_cons);
   
+  tdb_cons *tdb = Tdb_cons_val(caml_tdb_cons);
+  tdb_cons_close(tdb);
+  Tdb_cons_val(caml_tdb_cons) = 0;
+
   CAMLreturn(Val_unit);
 }
+
+/* ----------------------------------------- */
+/* Working with TrailDB read-only databases. */
+/* ----------------------------------------- */
 
 extern CAMLprim
 value ocaml_tdb_open(value caml_path) {
   CAMLparam1(caml_path);
   CAMLlocal1(caml_tdb);
+
+  tdb* tdb = tdb_init();
+  caml_tdb = alloc_tdb_wrapper(tdb);
 
   CAMLreturn(caml_tdb);
 }
