@@ -61,6 +61,13 @@ let read_simple_traildb () =
     let cursor = tdb_cursor_new db in
     tdb_get_trail cursor 0L;
     assert (tdb_get_trail_length cursor = 4L);
+    tdb_get_trail cursor 0L;
+    let event = tdb_cursor_peek cursor in assert ((the event).timestamp = 123456L);
+    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123456L);
+    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123457L);
+    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123458L);
+    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123459L);
+    let event = tdb_cursor_next cursor in assert (event = None);
   with Error err -> begin
     prerr_endline (tdb_error_str err);
     assert false

@@ -73,9 +73,11 @@ type trail_id = int64
 (* A trail identifier. *)
 type tbd_field = int64
 
-type tdb_event
-
+(* A field value pair *)
 type tdb_item
+
+(* An event *)
+type tdb_event = { timestamp: timestamp; values: tdb_item list }
 
 (* Get the number of fields. *)
 val tdb_num_fields: tdb -> int64

@@ -7,8 +7,8 @@ type field_name = string
 type field_value = string
 type trail_id = int64
 type tbd_field = int64
-type tdb_event
-type tdb_item
+type tdb_item = int64
+type tdb_event = { timestamp: timestamp; values: tdb_item list }
 type tdb_cursor
 type tdb_event_filter
 type literal = Pos of tdb_item | Neg of tdb_item

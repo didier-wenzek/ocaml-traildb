@@ -460,12 +460,36 @@ value ocaml_tdb_get_trail_length(value caml_cursor) {
   CAMLreturn(caml_num);
 }
 
+value caml_copy_tdb_event(const tdb_event *event) {
+  CAMLparam0();
+  CAMLlocal4(caml_option, caml_event, caml_timestamp, caml_values);
+
+  if (event) {
+    caml_timestamp = caml_copy_int64(event->timestamp);
+    caml_values = Val_int(0); // Nil
+
+    caml_event = caml_alloc(2,0); // {timestamp,values}
+    Store_field(caml_event, 0, caml_timestamp);
+    Store_field(caml_event, 1, caml_values);
+
+    caml_option = caml_alloc(1,0); // Some(event)
+    Store_field(caml_option, 0, caml_event);
+  }
+  else {
+    caml_option = Val_int(0); // None
+  }
+
+  CAMLreturn(caml_option);
+}
+
 extern CAMLprim
 value ocaml_tdb_cursor_next(value caml_cursor) {
   CAMLparam1(caml_cursor);
   CAMLlocal1(caml_event_option);
 
-  // TODO
+  tdb_cursor* cursor = Tdb_cursor_val(caml_cursor);
+  const tdb_event *event = tdb_cursor_next(cursor);
+  caml_event_option = caml_copy_tdb_event(event);
 
   CAMLreturn(caml_event_option);
 }
@@ -475,7 +499,9 @@ value ocaml_tdb_cursor_peek(value caml_cursor) {
   CAMLparam1(caml_cursor);
   CAMLlocal1(caml_event_option);
 
-  // TODO
+  tdb_cursor* cursor = Tdb_cursor_val(caml_cursor);
+  const tdb_event *event = tdb_cursor_peek(cursor);
+  caml_event_option = caml_copy_tdb_event(event);
 
   CAMLreturn(caml_event_option);
 }
