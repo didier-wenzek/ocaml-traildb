@@ -27,7 +27,7 @@ let read_empty_traildb () =
 
 let create_simple_traildb () =
   try
-    let db = tdb_cons_open "/tmp/foo" ["unit";"value"] in
+    let db = tdb_cons_open "/tmp/bar" ["unit";"value"] in
     let uuid = Uuidm.(v5 ns_oid "trail_0") in
     tdb_cons_add db uuid  123456L ["temperature";"12"];
     tdb_cons_add db uuid  123457L ["temperature";"13"];
@@ -39,16 +39,33 @@ let create_simple_traildb () =
     assert false
   end
 
+let the = function 
+  | Some x -> x
+  | None -> raise Not_found
+
+let ($) f x = f x
+
 let read_simple_traildb () =
   try
-    let db = tdb_open "/tmp/foo" in
+    let db = tdb_open "/tmp/bar" in
     assert (tdb_num_trails db = 1L);
     assert (tdb_num_events db = 4L);
     assert (tdb_num_fields db = 3L);
+    assert (tdb_min_timestamp db = 123456L);
+    assert (tdb_max_timestamp db = 123459L);
+    Format.printf "tdb_lexicon_size time = %Ld\n%!" (tdb_lexicon_size db (the $ tdb_get_field db "time"));
+    Format.printf "tdb_lexicon_size unit = %Ld\n%!" (tdb_lexicon_size db (the $ tdb_get_field db "unit"));
+    Format.printf "tdb_lexicon_size value = %Ld\n%!" (tdb_lexicon_size db (the $ tdb_get_field db "value"));
+    assert (tdb_lexicon_size db (the $ tdb_get_field db "unit") = 2L); (* ??? *)
+    assert (tdb_lexicon_size db (the $ tdb_get_field db "value") = 2L); (* ???? *)
+    let cursor = tdb_cursor_new db in
+    tdb_get_trail cursor 0L;
+    assert (tdb_get_trail_length cursor = 4L);
   with Error err -> begin
     prerr_endline (tdb_error_str err);
     assert false
   end
+
 let _ =
   create_empty_traildb ();
   read_empty_traildb ();

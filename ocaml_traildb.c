@@ -151,6 +151,29 @@ static value alloc_tdb_wrapper (tdb* tdb) {
   return v;
 }
 
+#define Tdb_cursor_val(v) (*((tdb_cursor **) Data_custom_val(v)))
+
+static void tdb_cursor_custom_finalize(value v) {
+  tdb_cursor_free(Tdb_cursor_val(v));
+}
+
+static struct custom_operations tdb_cursor_operations = {
+  "tdb_cursor",
+  tdb_cursor_custom_finalize,
+  custom_compare_default,
+  custom_compare_ext_default,
+  custom_hash_default,
+  custom_serialize_default,
+  custom_deserialize_default
+};
+
+static value alloc_tdb_cursor_wrapper (tdb_cursor* tdb) {
+  value v = alloc_custom(&tdb_cursor_operations, sizeof(tdb_cursor*), 0, 1);
+  Tdb_cursor_val(v) = tdb;
+  return v;
+}
+
+
 /* --------------------------------------- */
 /* Helper functions.                       */
 /* --------------------------------------- */
@@ -383,6 +406,19 @@ value ocaml_tdb_get_field_name(value caml_tdb, value caml_field) {
   CAMLreturn(caml_name);
 }
 
+extern CAMLprim
+value ocaml_tdb_lexicon_size(value caml_tdb, value caml_field) {
+  CAMLparam2(caml_tdb, caml_field);
+  CAMLlocal1(caml_num);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  tdb_field field = Int64_val(caml_field);
+  uint64_t count = tdb_lexicon_size(tdb, field);
+  caml_num = caml_copy_int64(count);
+
+  CAMLreturn(caml_num);
+}
+
 /* --------------------- */
 /* Working with cursors. */
 /* --------------------- */
@@ -392,7 +428,9 @@ value ocaml_tdb_cursor_new(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_cursor);
 
-  // TODO
+  tdb* tdb = Tdb_val(caml_tdb);
+  tdb_cursor* cursor = tdb_cursor_new(tdb);
+  caml_cursor = alloc_tdb_cursor_wrapper(cursor);
 
   CAMLreturn(caml_cursor);
 }
@@ -401,7 +439,11 @@ extern CAMLprim
 value ocaml_tdb_get_trail(value caml_cursor, value caml_trail) {
   CAMLparam2(caml_cursor, caml_trail);
   
-  // TODO
+  tdb_cursor* cursor = Tdb_cursor_val(caml_cursor);
+  uint64_t trail = Int64_val(caml_trail);
+
+  tdb_error err = tdb_get_trail(cursor, trail);
+  if (err) raise_exception(err);
 
   CAMLreturn(Val_unit);
 }
@@ -411,7 +453,9 @@ value ocaml_tdb_get_trail_length(value caml_cursor) {
   CAMLparam1(caml_cursor);
   CAMLlocal1(caml_num);
 
-  // TODO
+  tdb_cursor* cursor = Tdb_cursor_val(caml_cursor);
+  uint64_t count = tdb_get_trail_length(cursor);
+  caml_num = caml_copy_int64(count);
 
   CAMLreturn(caml_num);
 }

@@ -68,7 +68,7 @@ val tdb_max_timestamp: tdb -> timestamp
 (* ------------------------------------- *)
 
 (* A trail identifier. *)
-type trail_id
+type trail_id = int64
 
 (* A trail identifier. *)
 type tbd_field = int64
@@ -85,6 +85,9 @@ val tdb_get_field: tdb -> string -> tbd_field option
 
 (* Get the field name given a field ID. *)
 val tdb_get_field_name: tdb -> tbd_field -> string option
+
+(* Get the number of distinct values in the given field. *)
+val tdb_lexicon_size: tdb -> tbd_field -> int64
 
 (* -------------------- *)
 (* Working with cursor  *)
