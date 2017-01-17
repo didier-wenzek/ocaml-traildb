@@ -10,14 +10,20 @@ let create_empty_traildb () =
   end
 
 let read_empty_traildb () =
-  let db = tdb_open "/tmp/foo" in
-  Format.printf "tdb_num_fields = %Ld\n%!" (tdb_num_fields db);
-  Format.printf "        field[0] = %s\n%!" (tdb_get_field_name db 0L);
-  Format.printf "        field[1] = %s\n%!" (tdb_get_field_name db 1L);
-  Format.printf "        field[2] = %s\n%!" (tdb_get_field_name db 2L);
-  assert (tdb_num_trails db = 0L);
-  assert (tdb_num_events db = 0L);
-  assert (tdb_num_fields db = 3L)
+  try
+    let db = tdb_open "/tmp/foo" in
+    assert (tdb_num_trails db = 0L);
+    assert (tdb_num_events db = 0L);
+    assert (tdb_num_fields db = 3L);
+    assert (tdb_get_field_name db 0L = Some "time");
+    assert (tdb_get_field_name db 1L = Some "unit");
+    assert (tdb_get_field db "value" = Some 2L);
+    assert (tdb_get_field_name db 6L = None);
+    assert (tdb_get_field db "foo" = None)
+  with Error err -> begin
+    prerr_endline (tdb_error_str err);
+    assert false
+  end
 
 let _ =
   create_empty_traildb ();

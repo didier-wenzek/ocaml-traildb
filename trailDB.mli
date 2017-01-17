@@ -81,10 +81,10 @@ type tdb_item
 val tdb_num_fields: tdb -> int64
 
 (* Get the field ID given a field name. *)
-val tdb_get_field: tdb -> string -> tbd_field
+val tdb_get_field: tdb -> string -> tbd_field option
 
 (* Get the field name given a field ID. *)
-val tdb_get_field_name: tdb -> tbd_field -> string
+val tdb_get_field_name: tdb -> tbd_field -> string option
 
 (* -------------------- *)
 (* Working with cursor  *)

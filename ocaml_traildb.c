@@ -342,7 +342,13 @@ value ocaml_tdb_get_field(value caml_tdb, value caml_name) {
   const char *field_name = String_val(caml_name);
   tdb_field field;
   tdb_error err = tdb_get_field(tdb, field_name, &field);
-  if (err) raise_exception(err);
+
+  if (err) {
+    caml_field = Val_int(0); // None
+  } else {
+    caml_field = caml_alloc(1,0); // Some(tdb_field)
+    Store_field(caml_field, 0, caml_copy_int64(field));
+  }
 
   CAMLreturn(caml_field);
 }
@@ -355,7 +361,14 @@ value ocaml_tdb_get_field_name(value caml_tdb, value caml_field) {
   tdb* tdb = Tdb_val(caml_tdb);
   tdb_field field = Int64_val(caml_field);
   const char *field_name = tdb_get_field_name(tdb, field);
-  caml_name = caml_copy_string(field_name);
+
+  if (field_name) {
+    caml_name = caml_alloc(1,0); // Some(str)
+    Store_field(caml_name, 0, caml_copy_string(field_name));
+  }
+  else {
+    caml_name = Val_int(0); // None
+  } 
  
   CAMLreturn(caml_name);
 }
