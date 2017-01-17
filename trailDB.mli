@@ -64,13 +64,23 @@ val tdb_min_timestamp: tdb -> timestamp
 val tdb_max_timestamp: tdb -> timestamp
 
 (* ------------------------------------- *)
-(* Working with items, fields and values *)
+(* Working with trails and uuids.        *)
 (* ------------------------------------- *)
 
 (* A trail identifier. *)
 type trail_id = int64
 
-(* A trail identifier. *)
+(* Get the UUID given a trail ID. This is a fast O(1) operation. *)
+val tdb_get_uuid: tdb -> trail_id -> uuid option
+
+(* Get the trail ID given a UUID. This is an O(log N) operation. *)
+val tdb_get_trail_id: tdb -> uuid -> trail_id option
+
+(* --------------------------------------------- *)
+(* Working with events, items, fields and values *)
+(* --------------------------------------------- *)
+
+(* A field identifier. *)
 type tbd_field = int64
 
 (* A field value pair *)

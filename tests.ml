@@ -48,6 +48,7 @@ let ($) f x = f x
 let read_simple_traildb () =
   try
     let db = tdb_open "/tmp/bar" in
+    let uuid = Uuidm.(v5 ns_oid "trail_0") in
     assert (tdb_num_trails db = 1L);
     assert (tdb_num_events db = 4L);
     assert (tdb_num_fields db = 3L);
@@ -55,6 +56,10 @@ let read_simple_traildb () =
     assert (tdb_max_timestamp db = 123459L);
     assert (tdb_lexicon_size db (the $ tdb_get_field db "unit") = 2L); (* "" + "temperature" *)
     assert (tdb_lexicon_size db (the $ tdb_get_field db "value") = 4L); (* "" + all values *)
+    assert (tdb_get_trail_id db uuid = Some 0L);
+    assert (tdb_get_trail_id db (Uuidm.(v5 ns_oid "xxx")) = None);
+    assert (tdb_get_uuid db 0L = Some uuid);
+    assert (tdb_get_uuid db 1L = None);
     let cursor = tdb_cursor_new db in
     tdb_get_trail cursor 0L;
     assert (tdb_get_trail_length cursor = 4L);

@@ -375,6 +375,52 @@ value ocaml_tdb_max_timestamp(value caml_tdb) {
 }
 
 /* --------------------- */
+/* Working with uuids.   */
+/* --------------------- */
+
+extern CAMLprim
+value ocaml_tdb_get_uuid(value caml_tdb, value caml_trail_id) {
+  CAMLparam2(caml_tdb, caml_trail_id);
+  CAMLlocal2(caml_option, caml_uuid);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  uint64_t trail = Int64_val(caml_trail_id);
+  const uint8_t *uuid = tdb_get_uuid(tdb, trail);
+
+  if (uuid) {
+    caml_uuid = caml_alloc_string(16);
+    memcpy(String_val(caml_uuid), uuid, 16);
+
+    caml_option = caml_alloc(1,0); // Some(uuid)
+    Store_field(caml_option, 0, caml_uuid);
+  } else {
+    caml_option = Val_int(0); // None
+  }
+
+  CAMLreturn(caml_option);
+}
+
+extern CAMLprim
+value ocaml_tdb_get_trail_id(value caml_tdb, value caml_uuid) {
+  CAMLparam2(caml_tdb, caml_uuid);
+  CAMLlocal2(caml_option, caml_trail_id);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  const uint8_t* uuid = (const uint8_t*) String_val(caml_uuid);
+  uint64_t trail_id;
+
+  tdb_error err = tdb_get_trail_id(tdb, uuid, &trail_id);
+  if (err) {
+    caml_option = Val_int(0); // None
+  } else {
+    caml_option = caml_alloc(1,0); // Some(trail_id)
+    Store_field(caml_option, 0, caml_copy_int64(trail_id));
+  }
+
+  CAMLreturn(caml_option);
+}
+
+/* --------------------- */
 /* Working with fields. */
 /* --------------------- */
 

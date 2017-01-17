@@ -80,6 +80,8 @@ external tdb_num_trails: tdb -> int64 = "ocaml_tdb_num_trails"
 external tdb_num_events: tdb -> int64 = "ocaml_tdb_num_events"
 external tdb_min_timestamp: tdb -> timestamp = "ocaml_tdb_min_timestamp"
 external tdb_max_timestamp: tdb -> timestamp = "ocaml_tdb_max_timestamp"
+external tdb_get_uuid: tdb -> trail_id -> string option = "ocaml_tdb_get_uuid"
+external tdb_get_trail_id: tdb -> string -> trail_id option = "ocaml_tdb_get_trail_id"
 external tdb_num_fields: tdb -> int64 = "ocaml_tdb_num_fields"
 external tdb_get_field: tdb -> string -> tbd_field option = "ocaml_tdb_get_field"
 external tdb_get_field_name: tdb -> tbd_field -> string option = "ocaml_tdb_get_field_name"
@@ -95,5 +97,13 @@ external tdb_error_str: error -> string = "ocaml_tdb_error_str"
 
 let tdb_cons_add tdb_cons uuid timestamp fields =
   tdb_cons_add tdb_cons (Uuidm.to_bytes uuid) timestamp fields
+
+let tdb_get_uuid tdb trail_id =
+  match tdb_get_uuid tdb trail_id with
+  | None -> None
+  | Some uuid -> Uuidm.of_bytes uuid
+
+let tdb_get_trail_id tdb uuid =
+  tdb_get_trail_id tdb (Uuidm.to_bytes uuid)
 
 let tdb_event_filter_new conjunction = raise (Invalid_argument "TODO")
