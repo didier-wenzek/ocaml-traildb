@@ -53,11 +53,8 @@ let read_simple_traildb () =
     assert (tdb_num_fields db = 3L);
     assert (tdb_min_timestamp db = 123456L);
     assert (tdb_max_timestamp db = 123459L);
-    Format.printf "tdb_lexicon_size time = %Ld\n%!" (tdb_lexicon_size db (the $ tdb_get_field db "time"));
-    Format.printf "tdb_lexicon_size unit = %Ld\n%!" (tdb_lexicon_size db (the $ tdb_get_field db "unit"));
-    Format.printf "tdb_lexicon_size value = %Ld\n%!" (tdb_lexicon_size db (the $ tdb_get_field db "value"));
-    assert (tdb_lexicon_size db (the $ tdb_get_field db "unit") = 2L); (* ??? *)
-    assert (tdb_lexicon_size db (the $ tdb_get_field db "value") = 2L); (* ???? *)
+    assert (tdb_lexicon_size db (the $ tdb_get_field db "unit") = 2L); (* "" + "temperature" *)
+    assert (tdb_lexicon_size db (the $ tdb_get_field db "value") = 4L); (* "" + all values *)
     let cursor = tdb_cursor_new db in
     tdb_get_trail cursor 0L;
     assert (tdb_get_trail_length cursor = 4L);
@@ -68,8 +65,6 @@ let read_simple_traildb () =
       assert (List.length (the event).values = 2);
       match (the event).values with
       | [item1;item2] ->
-        Format.printf "item1 = %s\n%!" (tdb_get_item_value db item1);
-        Format.printf "item2 = %s\n%!" (tdb_get_item_value db item2);
         assert (tdb_get_item_value db item1 = "temperature");
         assert (tdb_get_item_value db item2 = "12");
       | _ -> assert false

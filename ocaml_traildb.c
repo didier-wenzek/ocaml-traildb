@@ -199,6 +199,16 @@ static void copy_ocaml_string_list(value caml_list, char** strings)
   }
 }
 
+static void copy_ocaml_length_list(value caml_list, uint64_t* lengths)
+{
+  CAMLparam1(caml_list);
+
+  while (caml_list != Val_emptylist) {
+    *lengths++ = caml_string_length(Field(caml_list, 0));
+    caml_list = Field(caml_list, 1);
+  }
+}
+
 /* --------------------------------------- */
 /* Working with TrailDB database builders. */
 /* --------------------------------------- */
@@ -232,8 +242,10 @@ value ocaml_tdb_cons_add(value caml_tdb_cons, value caml_uuid, value caml_timest
   uint64_t num_values = ocaml_list_len(caml_values);
   char* values[num_values];
   copy_ocaml_string_list(caml_values, values);
+  uint64_t lengths[num_values];
+  copy_ocaml_length_list(caml_values, lengths);
 
-  tdb_error err = tdb_cons_add(cons, uuid, timestamp, (const char **) values, &num_values);
+  tdb_error err = tdb_cons_add(cons, uuid, timestamp, (const char **) values, (const uint64_t *) lengths);
   if (err) raise_exception(err);
 
   CAMLreturn(Val_unit);
@@ -429,7 +441,8 @@ value ocaml_tdb_get_item_value(value caml_tdb, value caml_item) {
   uint64_t value_length;
   const char *string_value = tdb_get_item_value(tdb, item, &value_length);
 
-  caml_string_value = caml_copy_string(string_value);
+  caml_string_value = caml_alloc_string(value_length);
+  memcpy(String_val(caml_string_value), string_value, value_length);
 
   CAMLreturn(caml_string_value);
 }
