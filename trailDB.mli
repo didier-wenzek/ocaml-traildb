@@ -29,20 +29,13 @@ val tdb_cons_add: tdb_cons -> uuid -> timestamp -> field_value list -> unit
 (* Finalize TrailDB construction, creating a valid TrailDB file *)
 val tdb_cons_finalize: tdb_cons -> unit
 
-(* Free a TrailDB constructor handle *)
-val tdb_cons_close: tdb_cons -> unit
-
 (* Merge an existing TrailDB to this constructor.
    The fields must be equal between the existing and the new TrailDB. *)
 val tdb_cons_append: tdb_cons -> tdb -> unit
 
 
-
 (* Open a TrailDB for reading. *)
 val tdb_open: path -> tdb
-
-(* Close a TrailDB. *)
-val tdb_close: tdb -> unit
 
 (* Inform the operating system that this TrailDB does not need to be kept in memory. *)
 val tdb_dontneed: tdb -> unit
@@ -86,9 +79,6 @@ type tdb_cursor
 
 (* Create a new cursor handle. *)
 val tdb_cursor_new: tdb -> tdb_cursor
-
-(* Free a cursor handle. *)
-val tdb_cursor_free: tdb_cursor -> unit
 
 (* Reset the cursor to the given trail ID. *)
 val tdb_get_trail: tdb_cursor -> trail_id -> unit

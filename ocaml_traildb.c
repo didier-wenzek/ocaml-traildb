@@ -110,8 +110,7 @@ value ocaml_tdb_error_str(value caml_err) {
 #define Tdb_cons_val(v) (*((tdb_cons **) Data_custom_val(v)))
 
 static void tdb_cons_custom_finalize(value v) {
-  tdb_cons *tdb = Tdb_cons_val(v);
-  if (tdb) tdb_cons_close(tdb);
+  tdb_cons_close(Tdb_cons_val(v));
 }
 
 static struct custom_operations tdb_cons_operations = {
@@ -133,8 +132,7 @@ static value alloc_tdb_cons_wrapper (tdb_cons* tdb) {
 #define Tdb_val(v) (*((struct _tdb **) Data_custom_val(v)))
 
 static void tdb_custom_finalize(value v) {
-  tdb *tdb = Tdb_val(v);
-  if (tdb) tdb_close(tdb);
+  tdb_close(Tdb_val(v));
 }
 
 static struct custom_operations tdb_operations = {
@@ -193,17 +191,6 @@ value ocaml_tdb_cons_finalize(value caml_tdb_cons) {
   CAMLreturn(Val_unit);
 }
 
-extern CAMLprim
-value ocaml_tdb_cons_close(value caml_tdb_cons) {
-  CAMLparam1(caml_tdb_cons);
-  
-  tdb_cons *tdb = Tdb_cons_val(caml_tdb_cons);
-  tdb_cons_close(tdb);
-  Tdb_cons_val(caml_tdb_cons) = 0;
-
-  CAMLreturn(Val_unit);
-}
-
 /* ----------------------------------------- */
 /* Working with TrailDB read-only databases. */
 /* ----------------------------------------- */
@@ -217,13 +204,6 @@ value ocaml_tdb_open(value caml_path) {
   caml_tdb = alloc_tdb_wrapper(tdb);
 
   CAMLreturn(caml_tdb);
-}
-
-extern CAMLprim
-value ocaml_tdb_close(value caml_tdb) {
-  CAMLparam1(caml_tdb);
-  
-  CAMLreturn(Val_unit);
 }
 
 extern CAMLprim
@@ -286,13 +266,6 @@ value ocaml_tdb_cursor_new(value caml_tdb) {
   CAMLlocal1(caml_cursor);
 
   CAMLreturn(caml_cursor);
-}
-
-extern CAMLprim
-value ocaml_tdb_cursor_free(value caml_cursor) {
-  CAMLparam1(caml_cursor);
-  
-  CAMLreturn(Val_unit);
 }
 
 extern CAMLprim
