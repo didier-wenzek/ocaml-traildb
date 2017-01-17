@@ -62,7 +62,18 @@ let read_simple_traildb () =
     tdb_get_trail cursor 0L;
     assert (tdb_get_trail_length cursor = 4L);
     tdb_get_trail cursor 0L;
-    let event = tdb_cursor_peek cursor in assert ((the event).timestamp = 123456L);
+    let event = tdb_cursor_peek cursor in
+    begin
+      assert ((the event).timestamp = 123456L);
+      assert (List.length (the event).values = 2);
+      match (the event).values with
+      | [item1;item2] ->
+        Format.printf "item1 = %s\n%!" (tdb_get_item_value db item1);
+        Format.printf "item2 = %s\n%!" (tdb_get_item_value db item2);
+        assert (tdb_get_item_value db item1 = "temperature");
+        assert (tdb_get_item_value db item2 = "12");
+      | _ -> assert false
+    end;
     let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123456L);
     let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123457L);
     let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123458L);

@@ -419,6 +419,21 @@ value ocaml_tdb_lexicon_size(value caml_tdb, value caml_field) {
   CAMLreturn(caml_num);
 }
 
+extern CAMLprim
+value ocaml_tdb_get_item_value(value caml_tdb, value caml_item) {
+  CAMLparam2(caml_tdb, caml_item);
+  CAMLlocal1(caml_string_value);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  tdb_item item = Int64_val(caml_item);
+  uint64_t value_length;
+  const char *string_value = tdb_get_item_value(tdb, item, &value_length);
+
+  caml_string_value = caml_copy_string(string_value);
+
+  CAMLreturn(caml_string_value);
+}
+
 /* --------------------- */
 /* Working with cursors. */
 /* --------------------- */
@@ -462,11 +477,21 @@ value ocaml_tdb_get_trail_length(value caml_cursor) {
 
 value caml_copy_tdb_event(const tdb_event *event) {
   CAMLparam0();
-  CAMLlocal4(caml_option, caml_event, caml_timestamp, caml_values);
+  CAMLlocal5(caml_option, caml_event, caml_timestamp, caml_values, caml_cons);
 
   if (event) {
     caml_timestamp = caml_copy_int64(event->timestamp);
     caml_values = Val_int(0); // Nil
+
+    uint64_t i = event->num_items;
+    while (i--) {
+      const tdb_item item = event->items[i];
+      caml_cons = caml_alloc(2,0); // Cons(item, values)
+      Store_field(caml_cons, 0, caml_copy_int64(item));
+      Store_field(caml_cons, 1, caml_values);
+
+      caml_values = caml_cons;
+    }
 
     caml_event = caml_alloc(2,0); // {timestamp,values}
     Store_field(caml_event, 0, caml_timestamp);

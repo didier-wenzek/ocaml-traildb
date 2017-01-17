@@ -91,6 +91,9 @@ val tdb_get_field_name: tdb -> tbd_field -> string option
 (* Get the number of distinct values in the given field. *)
 val tdb_lexicon_size: tdb -> tbd_field -> int64
 
+(* Get the value corresponding to an item. *)
+val tdb_get_item_value: tdb -> tdb_item -> string
+
 (* -------------------- *)
 (* Working with cursor  *)
 (* -------------------- *)
