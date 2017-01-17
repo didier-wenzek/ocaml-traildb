@@ -6,6 +6,7 @@ type timestamp = int64
 type field_name = string
 type field_value = string
 type trail_id
+type tbd_field = int64
 type tdb_event
 type tdb_item
 type tdb_cursor
@@ -80,6 +81,8 @@ external tdb_num_events: tdb -> int64 = "ocaml_tdb_num_events"
 external tdb_min_timestamp: tdb -> timestamp = "ocaml_tdb_min_timestamp"
 external tdb_max_timestamp: tdb -> timestamp = "ocaml_tdb_max_timestamp"
 external tdb_num_fields: tdb -> int64 = "ocaml_tdb_num_fields"
+external tdb_get_field: tdb -> string -> tbd_field = "ocaml_tdb_get_field"
+external tdb_get_field_name: tdb -> tbd_field -> string = "ocaml_tdb_get_field_name"
 external tdb_cursor_new: tdb -> tdb_cursor = "ocaml_tdb_cursor_new"
 external tdb_get_trail: tdb_cursor -> trail_id -> unit = "ocaml_tdb_get_trail"
 external tdb_get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length"

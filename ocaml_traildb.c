@@ -329,6 +329,41 @@ value ocaml_tdb_max_timestamp(value caml_tdb) {
   CAMLreturn(caml_timestamp);
 }
 
+/* --------------------- */
+/* Working with fields. */
+/* --------------------- */
+
+extern CAMLprim
+value ocaml_tdb_get_field(value caml_tdb, value caml_name) {
+  CAMLparam2(caml_tdb, caml_name);
+  CAMLlocal1(caml_field);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  const char *field_name = String_val(caml_name);
+  tdb_field field;
+  tdb_error err = tdb_get_field(tdb, field_name, &field);
+  if (err) raise_exception(err);
+
+  CAMLreturn(caml_field);
+}
+
+extern CAMLprim
+value ocaml_tdb_get_field_name(value caml_tdb, value caml_field) {
+  CAMLparam2(caml_tdb, caml_field);
+  CAMLlocal1(caml_name);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  tdb_field field = Int64_val(caml_field);
+  const char *field_name = tdb_get_field_name(tdb, field);
+  caml_name = caml_copy_string(field_name);
+ 
+  CAMLreturn(caml_name);
+}
+
+/* --------------------- */
+/* Working with cursors. */
+/* --------------------- */
+
 extern CAMLprim
 value ocaml_tdb_cursor_new(value caml_tdb) {
   CAMLparam1(caml_tdb);

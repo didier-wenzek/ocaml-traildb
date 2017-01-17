@@ -20,6 +20,10 @@ type field_name = string
 type field_value = string
 
 
+(* --------------------------------- *)
+(* Working with TraiDB constructors. *)
+(* --------------------------------- *)
+
 (* Open a new TrailDB. *)
 val tdb_cons_open: path -> field_name list -> tdb_cons
 
@@ -33,6 +37,9 @@ val tdb_cons_finalize: tdb_cons -> unit
    The fields must be equal between the existing and the new TrailDB. *)
 val tdb_cons_append: tdb_cons -> tdb -> unit
 
+(* --------------------------------- *)
+(* Working with read-only TraiDB.    *)
+(* --------------------------------- *)
 
 (* Open a TrailDB for reading. *)
 val tdb_open: path -> tdb
@@ -60,15 +67,24 @@ val tdb_max_timestamp: tdb -> timestamp
 (* Working with items, fields and values *)
 (* ------------------------------------- *)
 
-(* Get the number of fields. *)
-val tdb_num_fields: tdb -> int64
-
 (* A trail identifier. *)
 type trail_id
+
+(* A trail identifier. *)
+type tbd_field = int64
 
 type tdb_event
 
 type tdb_item
+
+(* Get the number of fields. *)
+val tdb_num_fields: tdb -> int64
+
+(* Get the field ID given a field name. *)
+val tdb_get_field: tdb -> string -> tbd_field
+
+(* Get the field name given a field ID. *)
+val tdb_get_field_name: tdb -> tbd_field -> string
 
 (* -------------------- *)
 (* Working with cursor  *)
