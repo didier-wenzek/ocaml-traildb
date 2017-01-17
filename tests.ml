@@ -65,7 +65,9 @@ let read_simple_traildb () =
       assert (List.length (the event).values = 2);
       match (the event).values with
       | [item1;item2] ->
+        assert (tdb_item_field item1 = (the $ tdb_get_field db "unit"));
         assert (tdb_get_item_value db item1 = "temperature");
+        assert (tdb_item_field item2 = (the $ tdb_get_field db "value"));
         assert (tdb_get_item_value db item2 = "12");
       | _ -> assert false
     end;

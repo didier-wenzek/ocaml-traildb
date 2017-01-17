@@ -432,6 +432,18 @@ value ocaml_tdb_lexicon_size(value caml_tdb, value caml_field) {
 }
 
 extern CAMLprim
+value ocaml_tdb_item_field(value caml_item) {
+  CAMLparam1(caml_item);
+  CAMLlocal1(caml_field);
+
+  tdb_item item = Int64_val(caml_item);
+  tdb_field field = tdb_item_field(item); 
+  caml_field = caml_copy_int64(field);
+
+  CAMLreturn(caml_field);
+}
+
+extern CAMLprim
 value ocaml_tdb_get_item_value(value caml_tdb, value caml_item) {
   CAMLparam2(caml_tdb, caml_item);
   CAMLlocal1(caml_string_value);
