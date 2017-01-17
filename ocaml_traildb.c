@@ -152,6 +152,31 @@ static value alloc_tdb_wrapper (tdb* tdb) {
 }
 
 /* --------------------------------------- */
+/* Helper functions.                       */
+/* --------------------------------------- */
+
+static unsigned int ocaml_list_len(value caml_list) {
+  CAMLparam1(caml_list);
+
+  unsigned int count = 0;
+  while (caml_list != Val_emptylist) {
+    ++ count;
+    caml_list = Field(caml_list, 1);
+  }
+  return count;
+}
+
+static void copy_ocaml_string_list(value caml_list, char** strings)
+{
+  CAMLparam1(caml_list);
+
+  while (caml_list != Val_emptylist) {
+    *strings++ = String_val(Field(caml_list, 0));
+    caml_list = Field(caml_list, 1);
+  }
+}
+
+/* --------------------------------------- */
 /* Working with TrailDB database builders. */
 /* --------------------------------------- */
 
@@ -162,6 +187,14 @@ value ocaml_tdb_cons_open(value caml_path, value caml_fields) {
 
   tdb_cons* tdb = tdb_cons_init();
   caml_tdb_cons = alloc_tdb_cons_wrapper(tdb);
+
+  uint64_t num_ofields = ocaml_list_len(caml_fields);
+  char* ofield_names[num_ofields];
+  copy_ocaml_string_list(caml_fields, ofield_names);
+
+  const char* root = String_val(caml_path);
+  tdb_error err = tdb_cons_open(tdb, root, (const char **) ofield_names, num_ofields);
+  if (err) raise_exception(err);
 
   CAMLreturn(caml_tdb_cons);
 }
@@ -177,6 +210,12 @@ extern CAMLprim
 value ocaml_tdb_cons_append(value caml_tdb_cons, value caml_tdb) {
   CAMLparam2(caml_tdb_cons, caml_tdb);
   
+  tdb_cons* cons = Tdb_cons_val(caml_tdb_cons);
+  tdb* tdb = Tdb_val(caml_tdb);
+
+  tdb_error err = tdb_cons_append(cons, tdb);
+  if (err) raise_exception(err);
+
   CAMLreturn(Val_unit);
 }
 
@@ -184,8 +223,8 @@ extern CAMLprim
 value ocaml_tdb_cons_finalize(value caml_tdb_cons) {
   CAMLparam1(caml_tdb_cons);
   
-  tdb_cons *tdb = Tdb_cons_val(caml_tdb_cons);
-  tdb_error err = tdb_cons_finalize(tdb);
+  tdb_cons *cons = Tdb_cons_val(caml_tdb_cons);
+  tdb_error err = tdb_cons_finalize(cons);
   if (err) raise_exception(err);
 
   CAMLreturn(Val_unit);
@@ -203,6 +242,10 @@ value ocaml_tdb_open(value caml_path) {
   tdb* tdb = tdb_init();
   caml_tdb = alloc_tdb_wrapper(tdb);
 
+  const char* root = String_val(caml_path);
+  tdb_error err = tdb_open(tdb, root);
+  if (err) raise_exception(err);
+
   CAMLreturn(caml_tdb);
 }
 
@@ -210,6 +253,9 @@ extern CAMLprim
 value ocaml_tdb_dontneed(value caml_tdb) {
   CAMLparam1(caml_tdb);
   
+  tdb* tdb = Tdb_val(caml_tdb);
+  tdb_dontneed(tdb);
+
   CAMLreturn(Val_unit);
 }
 
@@ -217,6 +263,9 @@ extern CAMLprim
 value ocaml_tdb_willneed(value caml_tdb) {
   CAMLparam1(caml_tdb);
   
+  tdb* tdb = Tdb_val(caml_tdb);
+  tdb_willneed(tdb);
+
   CAMLreturn(Val_unit);
 }
 
@@ -224,6 +273,10 @@ extern CAMLprim
 value ocaml_tdb_num_trails(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_num);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  uint64_t count = tdb_num_trails(tdb);
+  caml_num = caml_copy_int64(count);
 
   CAMLreturn(caml_num);
 }
@@ -233,6 +286,10 @@ value ocaml_tdb_num_events(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_num);
 
+  tdb* tdb = Tdb_val(caml_tdb);
+  uint64_t count = tdb_num_events(tdb);
+  caml_num = caml_copy_int64(count);
+
   CAMLreturn(caml_num);
 }
 
@@ -240,6 +297,10 @@ extern CAMLprim
 value ocaml_tdb_num_fields(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_num);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  uint64_t count = tdb_num_fields(tdb);
+  caml_num = caml_copy_int64(count);
 
   CAMLreturn(caml_num);
 }
@@ -249,6 +310,10 @@ value ocaml_tdb_min_timestamp(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_timestamp);
 
+  tdb* tdb = Tdb_val(caml_tdb);
+  uint64_t timestamp = tdb_min_timestamp(tdb);
+  caml_timestamp = caml_copy_int64(timestamp);
+
   CAMLreturn(caml_timestamp);
 }
 
@@ -256,6 +321,10 @@ extern CAMLprim
 value ocaml_tdb_max_timestamp(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_timestamp);
+
+  tdb* tdb = Tdb_val(caml_tdb);
+  uint64_t timestamp = tdb_max_timestamp(tdb);
+  caml_timestamp = caml_copy_int64(timestamp);
 
   CAMLreturn(caml_timestamp);
 }
