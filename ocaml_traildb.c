@@ -203,6 +203,16 @@ extern CAMLprim
 value ocaml_tdb_cons_add(value caml_tdb_cons, value caml_uuid, value caml_timestamp, value caml_values) {
   CAMLparam4(caml_tdb_cons, caml_uuid, caml_timestamp, caml_values);
   
+  tdb_cons* cons = Tdb_cons_val(caml_tdb_cons);
+  const uint8_t* uuid = (const uint8_t*) String_val(caml_uuid);
+  const uint64_t timestamp = Int64_val(caml_timestamp);
+  uint64_t num_values = ocaml_list_len(caml_values);
+  char* values[num_values];
+  copy_ocaml_string_list(caml_values, values);
+
+  tdb_error err = tdb_cons_add(cons, uuid, timestamp, (const char **) values, &num_values);
+  if (err) raise_exception(err);
+
   CAMLreturn(Val_unit);
 }
 
@@ -382,6 +392,8 @@ value ocaml_tdb_cursor_new(value caml_tdb) {
   CAMLparam1(caml_tdb);
   CAMLlocal1(caml_cursor);
 
+  // TODO
+
   CAMLreturn(caml_cursor);
 }
 
@@ -389,6 +401,8 @@ extern CAMLprim
 value ocaml_tdb_get_trail(value caml_cursor, value caml_trail) {
   CAMLparam2(caml_cursor, caml_trail);
   
+  // TODO
+
   CAMLreturn(Val_unit);
 }
 
@@ -396,6 +410,8 @@ extern CAMLprim
 value ocaml_tdb_get_trail_length(value caml_cursor) {
   CAMLparam1(caml_cursor);
   CAMLlocal1(caml_num);
+
+  // TODO
 
   CAMLreturn(caml_num);
 }
@@ -405,6 +421,8 @@ value ocaml_tdb_cursor_next(value caml_cursor) {
   CAMLparam1(caml_cursor);
   CAMLlocal1(caml_event_option);
 
+  // TODO
+
   CAMLreturn(caml_event_option);
 }
 
@@ -412,6 +430,8 @@ extern CAMLprim
 value ocaml_tdb_cursor_peek(value caml_cursor) {
   CAMLparam1(caml_cursor);
   CAMLlocal1(caml_event_option);
+
+  // TODO
 
   CAMLreturn(caml_event_option);
 }

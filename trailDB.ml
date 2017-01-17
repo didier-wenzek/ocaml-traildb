@@ -1,7 +1,7 @@
 type tdb_cons
 type tdb
 type path = string
-type uuid
+type uuid = Uuidm.t
 type timestamp = int64
 type field_name = string
 type field_value = string
@@ -70,7 +70,7 @@ let _ =
   Callback.register_exception "traildb.error" (Error(TDB_ERR_NOMEM))
 
 external tdb_cons_open: path -> field_name list -> tdb_cons = "ocaml_tdb_cons_open"
-external tdb_cons_add: tdb_cons -> uuid -> timestamp -> field_value list -> unit = "ocaml_tdb_cons_add"
+external tdb_cons_add: tdb_cons -> string -> timestamp -> field_value list -> unit = "ocaml_tdb_cons_add"
 external tdb_cons_finalize: tdb_cons -> unit = "ocaml_tdb_cons_finalize"
 external tdb_cons_append: tdb_cons -> tdb -> unit = "ocaml_tdb_cons_append"
 external tdb_open: path -> tdb = "ocaml_tdb_open"
@@ -89,5 +89,8 @@ external tdb_get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length
 external tdb_cursor_next: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_next"
 external tdb_cursor_peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
 external tdb_error_str: error -> string = "ocaml_tdb_error_str"
+
+let tdb_cons_add tdb_cons uuid timestamp fields =
+  tdb_cons_add tdb_cons (Uuidm.to_bytes uuid) timestamp fields
 
 let tdb_event_filter_new conjunction = raise (Invalid_argument "TODO")

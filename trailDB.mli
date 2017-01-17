@@ -8,7 +8,7 @@ type tdb
 type path = string
 
 (* A trail uuid *)
-type uuid
+type uuid = Uuidm.t
 
 (* A timestamp *)
 type timestamp = int64

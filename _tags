@@ -1,3 +1,4 @@
+<*.*>: package(uuidm)
 <libocamltraildb.a>: use_libtraildb
 <trailDB.cma>: use_ocaml_traildb, use_libtraildb
 <trailDB.cmxa>: use_ocaml_traildb
