@@ -19,7 +19,6 @@ type field_name = string
 (* A field value *)
 type field_value = string
 
-
 (* --------------------------------- *)
 (* Working with TraiDB constructors. *)
 (* --------------------------------- *)
@@ -142,13 +141,15 @@ end
 (* Once assigned to a cursor, only the subset of events that match the query are returned.  *)
 (* ---------------------------------------------------------------------------------------- *)
 
-type tdb_event_filter
+module Filter : sig
+  type tdb_event_filter
 
-type literal = Pos of tdb_item | Neg of tdb_item
-type disjunction = Or of literal list
-type conjunction = And of disjunction list
+  type literal = Pos of tdb_item | Neg of tdb_item
+  type disjunction = Or of literal list
+  type conjunction = And of disjunction list
 
-val tdb_event_filter_new: conjunction -> tdb_event_filter
+  val create: conjunction -> tdb_event_filter
+end
 
 (* ----------------------------------------------------- *)
 (* Working with errors.                                  *)

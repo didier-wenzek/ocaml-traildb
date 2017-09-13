@@ -9,10 +9,6 @@ type trail_id = int64
 type tbd_field = int64
 type tdb_item = int64
 type tdb_event = { timestamp: timestamp; values: tdb_item list }
-type tdb_event_filter
-type literal = Pos of tdb_item | Neg of tdb_item
-type disjunction = Or of literal list
-type conjunction = And of disjunction list
 
 type error = 
     (* generic *)
@@ -95,6 +91,14 @@ external get_item_field: tdb_item -> tbd_field = "ocaml_tdb_item_field"
 external get_item_value: tdb -> tdb_item -> string = "ocaml_tdb_get_item_value"
 external error_str: error -> string = "ocaml_tdb_error_str"
 
+let get_uuid tdb trail_id =
+  match get_uuid tdb trail_id with
+  | None -> None
+  | Some uuid -> Uuidm.of_bytes uuid
+
+let get_trail_id tdb uuid =
+  get_trail_id tdb (Uuidm.to_bytes uuid)
+
 module Cursor = struct
   type tdb_cursor
   external create: tdb -> tdb_cursor = "ocaml_tdb_cursor_new"
@@ -104,13 +108,11 @@ module Cursor = struct
   external peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
 end
 
+module Filter = struct
+  type tdb_event_filter
+  type literal = Pos of tdb_item | Neg of tdb_item
+  type disjunction = Or of literal list
+  type conjunction = And of disjunction list
 
-let get_uuid tdb trail_id =
-  match get_uuid tdb trail_id with
-  | None -> None
-  | Some uuid -> Uuidm.of_bytes uuid
-
-let get_trail_id tdb uuid =
-  get_trail_id tdb (Uuidm.to_bytes uuid)
-
-let tdb_event_filter_new conjunction = raise (Invalid_argument "TODO")
+  let create conjunction = raise (Invalid_argument "TODO")
+end

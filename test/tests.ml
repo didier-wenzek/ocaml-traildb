@@ -1,10 +1,8 @@
-open TrailDB
-
 let create_empty_traildb () =
   try
     let db = TrailDB.Cons.open_w "/tmp/foo" ["measure";"value"] in
     TrailDB.Cons.finalize db
-  with Error err -> begin
+  with TrailDB.Error err -> begin
     prerr_endline (TrailDB.error_str err);
     assert false
   end
@@ -20,7 +18,7 @@ let read_empty_traildb () =
     assert (TrailDB.get_field db "value" = Some 2L);
     assert (TrailDB.get_field_name db 6L = None);
     assert (TrailDB.get_field db "foo" = None)
-  with Error err -> begin
+  with TrailDB.Error err -> begin
     prerr_endline (TrailDB.error_str err);
     assert false
   end
@@ -34,7 +32,7 @@ let create_simple_traildb () =
     TrailDB.Cons.add db uuid  123458L ["temperature";"14"];
     TrailDB.Cons.add db uuid  123459L ["temperature";"13"];
     TrailDB.Cons.finalize db
-  with Error err -> begin
+  with TrailDB.Error err -> begin
     prerr_endline (TrailDB.error_str err);
     assert false
   end
@@ -70,10 +68,10 @@ let read_simple_traildb () =
       assert (List.length (the event).values = 2);
       match (the event).values with
       | [item1;item2] ->
-        assert (get_item_field item1 = (the $ TrailDB.get_field db "measure"));
-        assert (get_item_value db item1 = "temperature");
-        assert (get_item_field item2 = (the $ TrailDB.get_field db "value"));
-        assert (get_item_value db item2 = "12");
+        assert (TrailDB.get_item_field item1 = (the $ TrailDB.get_field db "measure"));
+        assert (TrailDB.get_item_value db item1 = "temperature");
+        assert (TrailDB.get_item_field item2 = (the $ TrailDB.get_field db "value"));
+        assert (TrailDB.get_item_value db item2 = "12");
       | _ -> assert false
     end;
     let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123456L);
@@ -81,7 +79,7 @@ let read_simple_traildb () =
     let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123458L);
     let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123459L);
     let event = TrailDB.Cursor.next cursor in assert (event = None);
-  with Error err -> begin
+  with TrailDB.Error err -> begin
     prerr_endline (TrailDB.error_str err);
     assert false
   end
