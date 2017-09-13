@@ -2,7 +2,7 @@ open TrailDB
 
 let create_empty_traildb () =
   try
-    let db = tdb_cons_open "/tmp/foo" ["unit";"value"] in
+    let db = tdb_cons_open "/tmp/foo" ["measure";"value"] in
     tdb_cons_finalize db
   with Error err -> begin
     prerr_endline (tdb_error_str err);
@@ -16,7 +16,7 @@ let read_empty_traildb () =
     assert (tdb_num_events db = 0L);
     assert (tdb_num_fields db = 3L);
     assert (tdb_get_field_name db 0L = Some "time");
-    assert (tdb_get_field_name db 1L = Some "unit");
+    assert (tdb_get_field_name db 1L = Some "measure");
     assert (tdb_get_field db "value" = Some 2L);
     assert (tdb_get_field_name db 6L = None);
     assert (tdb_get_field db "foo" = None)
@@ -27,7 +27,7 @@ let read_empty_traildb () =
 
 let create_simple_traildb () =
   try
-    let db = tdb_cons_open "/tmp/bar" ["unit";"value"] in
+    let db = tdb_cons_open "/tmp/bar" ["measure";"value"] in
     let uuid = Uuidm.(v5 ns_oid "trail_0") in
     tdb_cons_add db uuid  123456L ["temperature";"12"];
     tdb_cons_add db uuid  123457L ["temperature";"13"];
@@ -54,7 +54,7 @@ let read_simple_traildb () =
     assert (tdb_num_fields db = 3L);
     assert (tdb_min_timestamp db = 123456L);
     assert (tdb_max_timestamp db = 123459L);
-    assert (tdb_lexicon_size db (the $ tdb_get_field db "unit") = 2L); (* "" + "temperature" *)
+    assert (tdb_lexicon_size db (the $ tdb_get_field db "measure") = 2L); (* "" + "temperature" *)
     assert (tdb_lexicon_size db (the $ tdb_get_field db "value") = 4L); (* "" + all values *)
     assert (tdb_get_trail_id db uuid = Some 0L);
     assert (tdb_get_trail_id db (Uuidm.(v5 ns_oid "xxx")) = None);
@@ -70,7 +70,7 @@ let read_simple_traildb () =
       assert (List.length (the event).values = 2);
       match (the event).values with
       | [item1;item2] ->
-        assert (tdb_item_field item1 = (the $ tdb_get_field db "unit"));
+        assert (tdb_item_field item1 = (the $ tdb_get_field db "measure"));
         assert (tdb_get_item_value db item1 = "temperature");
         assert (tdb_item_field item2 = (the $ tdb_get_field db "value"));
         assert (tdb_get_item_value db item2 = "12");
