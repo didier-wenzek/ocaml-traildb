@@ -79,19 +79,19 @@ module Cons = struct
     add tdb_cons (Uuidm.to_bytes uuid) timestamp fields
 end
 
-external tdb_open: path -> tdb = "ocaml_tdb_open"
-external tdb_dontneed: tdb -> unit = "ocaml_tdb_dontneed"
-external tdb_willneed: tdb -> unit = "ocaml_tdb_willneed"
-external tdb_num_trails: tdb -> int64 = "ocaml_tdb_num_trails"
-external tdb_num_events: tdb -> int64 = "ocaml_tdb_num_events"
-external tdb_min_timestamp: tdb -> timestamp = "ocaml_tdb_min_timestamp"
-external tdb_max_timestamp: tdb -> timestamp = "ocaml_tdb_max_timestamp"
-external tdb_get_uuid: tdb -> trail_id -> string option = "ocaml_tdb_get_uuid"
-external tdb_get_trail_id: tdb -> string -> trail_id option = "ocaml_tdb_get_trail_id"
-external tdb_num_fields: tdb -> int64 = "ocaml_tdb_num_fields"
-external tdb_get_field: tdb -> string -> tbd_field option = "ocaml_tdb_get_field"
-external tdb_get_field_name: tdb -> tbd_field -> string option = "ocaml_tdb_get_field_name"
-external tdb_lexicon_size: tdb -> tbd_field -> int64 = "ocaml_tdb_lexicon_size"
+external open_r: path -> tdb = "ocaml_tdb_open"
+external dontneed: tdb -> unit = "ocaml_tdb_dontneed"
+external willneed: tdb -> unit = "ocaml_tdb_willneed"
+external num_trails: tdb -> int64 = "ocaml_tdb_num_trails"
+external num_events: tdb -> int64 = "ocaml_tdb_num_events"
+external min_timestamp: tdb -> timestamp = "ocaml_tdb_min_timestamp"
+external max_timestamp: tdb -> timestamp = "ocaml_tdb_max_timestamp"
+external get_uuid: tdb -> trail_id -> string option = "ocaml_tdb_get_uuid"
+external get_trail_id: tdb -> string -> trail_id option = "ocaml_tdb_get_trail_id"
+external num_fields: tdb -> int64 = "ocaml_tdb_num_fields"
+external get_field: tdb -> string -> tbd_field option = "ocaml_tdb_get_field"
+external get_field_name: tdb -> tbd_field -> string option = "ocaml_tdb_get_field_name"
+external lexicon_size: tdb -> tbd_field -> int64 = "ocaml_tdb_lexicon_size"
 external tdb_item_field: tdb_item -> tbd_field = "ocaml_tdb_item_field"
 external tdb_get_item_value: tdb -> tdb_item -> string = "ocaml_tdb_get_item_value"
 external tdb_cursor_new: tdb -> tdb_cursor = "ocaml_tdb_cursor_new"
@@ -99,14 +99,14 @@ external tdb_get_trail: tdb_cursor -> trail_id -> unit = "ocaml_tdb_get_trail"
 external tdb_get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length"
 external tdb_cursor_next: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_next"
 external tdb_cursor_peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
-external tdb_error_str: error -> string = "ocaml_tdb_error_str"
+external error_str: error -> string = "ocaml_tdb_error_str"
 
-let tdb_get_uuid tdb trail_id =
-  match tdb_get_uuid tdb trail_id with
+let get_uuid tdb trail_id =
+  match get_uuid tdb trail_id with
   | None -> None
   | Some uuid -> Uuidm.of_bytes uuid
 
-let tdb_get_trail_id tdb uuid =
-  tdb_get_trail_id tdb (Uuidm.to_bytes uuid)
+let get_trail_id tdb uuid =
+  get_trail_id tdb (Uuidm.to_bytes uuid)
 
 let tdb_event_filter_new conjunction = raise (Invalid_argument "TODO")

@@ -44,26 +44,26 @@ end
 (* --------------------------------- *)
 
 (* Open a TrailDB for reading. *)
-val tdb_open: path -> tdb
+val open_r: path -> tdb
 
 (* Inform the operating system that this TrailDB does not need to be kept in memory. *)
-val tdb_dontneed: tdb -> unit
+val dontneed: tdb -> unit
 
 (* Inform the operating system that this TrailDB will be accessed soon.
    Call this after tdb_dontneed once the TrailDB is needed again. *)
-val tdb_willneed: tdb -> unit
+val willneed: tdb -> unit
 
 (* Get the number of trails. *)
-val tdb_num_trails: tdb -> int64
+val num_trails: tdb -> int64
 
 (* Get the number of events. *)
-val tdb_num_events: tdb -> int64
+val num_events: tdb -> int64
 
 (* Get the oldest timestamp. *)
-val tdb_min_timestamp: tdb -> timestamp
+val min_timestamp: tdb -> timestamp
 
 (* Get the newest timestamp. *)
-val tdb_max_timestamp: tdb -> timestamp
+val max_timestamp: tdb -> timestamp
 
 (* ------------------------------------- *)
 (* Working with trails and uuids.        *)
@@ -73,10 +73,10 @@ val tdb_max_timestamp: tdb -> timestamp
 type trail_id = int64
 
 (* Get the UUID given a trail ID. This is a fast O(1) operation. *)
-val tdb_get_uuid: tdb -> trail_id -> uuid option
+val get_uuid: tdb -> trail_id -> uuid option
 
 (* Get the trail ID given a UUID. This is an O(log N) operation. *)
-val tdb_get_trail_id: tdb -> uuid -> trail_id option
+val get_trail_id: tdb -> uuid -> trail_id option
 
 (* --------------------------------------------- *)
 (* Working with events, items, fields and values *)
@@ -92,16 +92,16 @@ type tdb_item
 type tdb_event = { timestamp: timestamp; values: tdb_item list }
 
 (* Get the number of fields. *)
-val tdb_num_fields: tdb -> int64
+val num_fields: tdb -> int64
 
 (* Get the field ID given a field name. *)
-val tdb_get_field: tdb -> string -> tbd_field option
+val get_field: tdb -> string -> tbd_field option
 
 (* Get the field name given a field ID. *)
-val tdb_get_field_name: tdb -> tbd_field -> string option
+val get_field_name: tdb -> tbd_field -> string option
 
 (* Get the number of distinct values in the given field. *)
-val tdb_lexicon_size: tdb -> tbd_field -> int64
+val lexicon_size: tdb -> tbd_field -> int64
 
 (* Extract the field ID from an item. *)
 val tdb_item_field: tdb_item -> tbd_field
@@ -208,4 +208,4 @@ type error =
 exception Error of error
 
 (* Translate an error code to a string. *)
-val tdb_error_str: error -> string
+val error_str: error -> string
