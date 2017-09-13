@@ -104,34 +104,36 @@ val get_field_name: tdb -> tbd_field -> string option
 val lexicon_size: tdb -> tbd_field -> int64
 
 (* Extract the field ID from an item. *)
-val tdb_item_field: tdb_item -> tbd_field
+val get_item_field: tdb_item -> tbd_field
 
 (* Get the value corresponding to an item. *)
-val tdb_get_item_value: tdb -> tdb_item -> string
+val get_item_value: tdb -> tdb_item -> string
 
 (* -------------------- *)
 (* Working with cursor  *)
 (* -------------------- *)
 
-(* A cursor over events of a TrailDB read-only database. *)
-type tdb_cursor
+module Cursor : sig
+  (* A cursor over events of a TrailDB read-only database. *)
+  type tdb_cursor
 
-(* Create a new cursor handle. *)
-val tdb_cursor_new: tdb -> tdb_cursor
+  (* Create a new cursor handle. *)
+  val create: tdb -> tdb_cursor
 
-(* Reset the cursor to the given trail ID. *)
-val tdb_get_trail: tdb_cursor -> trail_id -> unit
+  (* Reset the cursor to the given trail ID. *)
+  val get_trail: tdb_cursor -> trail_id -> unit
 
-(* Get the number of events remaining in this cursor.
-   Note that this function consumes the cursor.
-   You need to reset it with [tdb_get_trail] to get more events. *)
-val tdb_get_trail_length: tdb_cursor -> int64
+  (* Get the number of events remaining in this cursor.
+     Note that this function consumes the cursor.
+     You need to reset it with [tdb_get_trail] to get more events. *)
+  val get_trail_length: tdb_cursor -> int64
 
-(* Consume the next event from the cursor. *)
-val tdb_cursor_next: tdb_cursor -> tdb_event option
+  (* Consume the next event from the cursor. *)
+  val next: tdb_cursor -> tdb_event option
 
-(* Return the next event from the cursor without consuming it. *)
-val tdb_cursor_peek: tdb_cursor -> tdb_event option
+  (* Return the next event from the cursor without consuming it. *)
+  val peek: tdb_cursor -> tdb_event option
+end
 
 (* ---------------------------------------------------------------------------------------- *)
 (* Filter events                                                                            *)

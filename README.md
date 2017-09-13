@@ -49,7 +49,7 @@ A TrailDB file is created after a series of event records with
 ```ocaml
   (* Start the creation of a new traildb file to record events
      with two fields (measure kind and value) plus an implicit timestamp *)
-  let db = TrailDB.Cons.open "/tmp/foo.tdb" ["measure";"value"] in
+  let db = TrailDB.Cons.open_w "/tmp/foo" ["measure";"value"] in
 
   (* Make some trail identifiers *)
   let uuid_0 = Uuidm.(v5 ns_oid "trail_0") in
@@ -72,28 +72,28 @@ Once build a TrailDB database is read only file.
 
 ```ocaml
   (* Open a read only TrailDB file *)
-  let db = TrailDB.tdb_open "/tmp/foo.tdb" in
+  let db = TrailDB.open_r "/tmp/foo.tdb" in
 
   (* Get some meta data *)
-  assert (TrailDB.tdb_num_trails db = 2L);
-  assert (TrailDB.tdb_num_events db = 7L);
-  assert (TrailDB.tdb_num_fields db = 3L); (* timestamp, measure, value *)
+  assert (TrailDB.num_trails db = 2L);
+  assert (TrailDB.num_events db = 7L);
+  assert (TrailDB.num_fields db = 3L); (* timestamp, measure, value *)
 
   (* Get the identifier of a trail given its UUIDs *)
   let trail_uuid = Uuidm.(v5 ns_oid "trail_1") in
-  let (Some trail_id) = TrailDB.tdb_get_trail_id db trail_uuid in
+  let (Some trail_id) = TrailDB.get_trail_id db trail_uuid in
 
   (* Extract the events of a trail using a cursor *)
-  let cursor = TrailDB.tdb_cursor_new db in
-  TrailDB.tdb_get_trail cursor trail_id;
+  let cursor = TrailDB.Cursor.create db in
+  TrailDB.Cursor.get_trail cursor trail_id;
 
   let rec loop () =
-    match TrailDB.tdb_cursor_next cursor with
+    match TrailDB.Cursor.next cursor with
     | None -> ()
     | Some event ->
       let [measure;value] =
         event.TrailDB.values
-        |> List.map (TrailDB.tdb_get_item_value db)
+        |> List.map (TrailDB.get_item_value db)
       in
       Printf.printf "(%Ld,%s,%s)\n" event.TrailDB.timestamp measure value
       |> loop

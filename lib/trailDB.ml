@@ -9,7 +9,6 @@ type trail_id = int64
 type tbd_field = int64
 type tdb_item = int64
 type tdb_event = { timestamp: timestamp; values: tdb_item list }
-type tdb_cursor
 type tdb_event_filter
 type literal = Pos of tdb_item | Neg of tdb_item
 type disjunction = Or of literal list
@@ -92,14 +91,19 @@ external num_fields: tdb -> int64 = "ocaml_tdb_num_fields"
 external get_field: tdb -> string -> tbd_field option = "ocaml_tdb_get_field"
 external get_field_name: tdb -> tbd_field -> string option = "ocaml_tdb_get_field_name"
 external lexicon_size: tdb -> tbd_field -> int64 = "ocaml_tdb_lexicon_size"
-external tdb_item_field: tdb_item -> tbd_field = "ocaml_tdb_item_field"
-external tdb_get_item_value: tdb -> tdb_item -> string = "ocaml_tdb_get_item_value"
-external tdb_cursor_new: tdb -> tdb_cursor = "ocaml_tdb_cursor_new"
-external tdb_get_trail: tdb_cursor -> trail_id -> unit = "ocaml_tdb_get_trail"
-external tdb_get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length"
-external tdb_cursor_next: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_next"
-external tdb_cursor_peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
+external get_item_field: tdb_item -> tbd_field = "ocaml_tdb_item_field"
+external get_item_value: tdb -> tdb_item -> string = "ocaml_tdb_get_item_value"
 external error_str: error -> string = "ocaml_tdb_error_str"
+
+module Cursor = struct
+  type tdb_cursor
+  external create: tdb -> tdb_cursor = "ocaml_tdb_cursor_new"
+  external get_trail: tdb_cursor -> trail_id -> unit = "ocaml_tdb_get_trail"
+  external get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length"
+  external next: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_next"
+  external peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
+end
+
 
 let get_uuid tdb trail_id =
   match get_uuid tdb trail_id with

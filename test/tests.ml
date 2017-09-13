@@ -60,27 +60,27 @@ let read_simple_traildb () =
     assert (TrailDB.get_trail_id db (Uuidm.(v5 ns_oid "xxx")) = None);
     assert (TrailDB.get_uuid db 0L = Some uuid);
     assert (TrailDB.get_uuid db 1L = None);
-    let cursor = tdb_cursor_new db in
-    tdb_get_trail cursor 0L;
-    assert (tdb_get_trail_length cursor = 4L);
-    tdb_get_trail cursor 0L;
-    let event = tdb_cursor_peek cursor in
+    let cursor = TrailDB.Cursor.create db in
+    TrailDB.Cursor.get_trail cursor 0L;
+    assert (TrailDB.Cursor.get_trail_length cursor = 4L);
+    TrailDB.Cursor.get_trail cursor 0L;
+    let event = TrailDB.Cursor.peek cursor in
     begin
       assert ((the event).timestamp = 123456L);
       assert (List.length (the event).values = 2);
       match (the event).values with
       | [item1;item2] ->
-        assert (tdb_item_field item1 = (the $ TrailDB.get_field db "measure"));
-        assert (tdb_get_item_value db item1 = "temperature");
-        assert (tdb_item_field item2 = (the $ TrailDB.get_field db "value"));
-        assert (tdb_get_item_value db item2 = "12");
+        assert (get_item_field item1 = (the $ TrailDB.get_field db "measure"));
+        assert (get_item_value db item1 = "temperature");
+        assert (get_item_field item2 = (the $ TrailDB.get_field db "value"));
+        assert (get_item_value db item2 = "12");
       | _ -> assert false
     end;
-    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123456L);
-    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123457L);
-    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123458L);
-    let event = tdb_cursor_next cursor in assert ((the event).timestamp = 123459L);
-    let event = tdb_cursor_next cursor in assert (event = None);
+    let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123456L);
+    let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123457L);
+    let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123458L);
+    let event = TrailDB.Cursor.next cursor in assert ((the event).timestamp = 123459L);
+    let event = TrailDB.Cursor.next cursor in assert (event = None);
   with Error err -> begin
     prerr_endline (TrailDB.error_str err);
     assert false
