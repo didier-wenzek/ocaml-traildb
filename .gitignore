@@ -9,3 +9,4 @@
 *.cmxa
 _build/
 *.native
+.merlin

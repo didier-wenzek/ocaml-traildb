@@ -1,20 +1,16 @@
-MODULES = trailDB.cmi
-LIB = trailDB.cma trailDB.cmxa trailDB.cmxs trailDB.a dllocamltraildb.so libocamltraildb.a $(MODULES)
-BIN = tests.native
-
 all:
-	ocamlbuild -use-ocamlfind $(LIB) $(BIN)
+	jbuilder build @install
 
-install:
-	ocamlfind install traildb META $(addprefix _build/, $(LIB))
+install: all
+	jbuilder install
 
 uninstall:
-	ocamlfind remove traildb
+	jbuilder uninstall
 
-tests: all
-	_build/tests.native
+test:
+	jbuilder runtest
 
 clean:
-	ocamlbuild -clean
+	jbuilder clean
 
-.PHONY: all clean tests install
+.PHONY: all clean test install uninstall
