@@ -49,23 +49,23 @@ A TrailDB file is created after a series of event records with
 ```ocaml
   (* Start the creation of a new traildb file to record events
      with two fields (measure kind and value) plus an implicit timestamp *)
-  let db = TrailDB.tdb_cons_open "/tmp/foo.tdb" ["measure";"value"] in
+  let db = TrailDB.Cons.open "/tmp/foo.tdb" ["measure";"value"] in
 
   (* Make some trail identifiers *)
   let uuid_0 = Uuidm.(v5 ns_oid "trail_0") in
   let uuid_1 = Uuidm.(v5 ns_oid "trail_1") in
 
   (* Insert events with a string value for each field *)
-  TrailDB.tdb_cons_add db uuid_0  123456L ["temperature";"22"];
-  TrailDB.tdb_cons_add db uuid_1  123456L ["temperature";"12"];
-  TrailDB.tdb_cons_add db uuid_1  123457L ["temperature";"13"];
-  TrailDB.tdb_cons_add db uuid_0  123457L ["temperature";"23"];
-  TrailDB.tdb_cons_add db uuid_0  123458L ["temperature";"24"];
-  TrailDB.tdb_cons_add db uuid_1  123458L ["temperature";"14"];
-  TrailDB.tdb_cons_add db uuid_1  123459L ["temperature";"13"];
+  TrailDB.Cons.add db uuid_0  123456L ["temperature";"22"];
+  TrailDB.Cons.add db uuid_1  123456L ["temperature";"12"];
+  TrailDB.Cons.add db uuid_1  123457L ["temperature";"13"];
+  TrailDB.Cons.add db uuid_0  123457L ["temperature";"23"];
+  TrailDB.Cons.add db uuid_0  123458L ["temperature";"24"];
+  TrailDB.Cons.add db uuid_1  123458L ["temperature";"14"];
+  TrailDB.Cons.add db uuid_1  123459L ["temperature";"13"];
 
   (* Dump on disk the TrailDB file *)
-  TrailDB.tdb_cons_finalize db
+  TrailDB.Cons.finalize db
 ```
 
 Once build a TrailDB database is read only file.

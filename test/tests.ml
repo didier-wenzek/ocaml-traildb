@@ -2,8 +2,8 @@ open TrailDB
 
 let create_empty_traildb () =
   try
-    let db = tdb_cons_open "/tmp/foo" ["measure";"value"] in
-    tdb_cons_finalize db
+    let db = TrailDB.Cons.open_w "/tmp/foo" ["measure";"value"] in
+    TrailDB.Cons.finalize db
   with Error err -> begin
     prerr_endline (tdb_error_str err);
     assert false
@@ -27,13 +27,13 @@ let read_empty_traildb () =
 
 let create_simple_traildb () =
   try
-    let db = tdb_cons_open "/tmp/bar" ["measure";"value"] in
+    let db = TrailDB.Cons.open_w "/tmp/bar" ["measure";"value"] in
     let uuid = Uuidm.(v5 ns_oid "trail_0") in
-    tdb_cons_add db uuid  123456L ["temperature";"12"];
-    tdb_cons_add db uuid  123457L ["temperature";"13"];
-    tdb_cons_add db uuid  123458L ["temperature";"14"];
-    tdb_cons_add db uuid  123459L ["temperature";"13"];
-    tdb_cons_finalize db
+    TrailDB.Cons.add db uuid  123456L ["temperature";"12"];
+    TrailDB.Cons.add db uuid  123457L ["temperature";"13"];
+    TrailDB.Cons.add db uuid  123458L ["temperature";"14"];
+    TrailDB.Cons.add db uuid  123459L ["temperature";"13"];
+    TrailDB.Cons.finalize db
   with Error err -> begin
     prerr_endline (tdb_error_str err);
     assert false

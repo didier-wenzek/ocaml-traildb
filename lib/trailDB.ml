@@ -69,10 +69,16 @@ exception Error of error
 let _ =
   Callback.register_exception "traildb.error" (Error(TDB_ERR_NOMEM))
 
-external tdb_cons_open: path -> field_name list -> tdb_cons = "ocaml_tdb_cons_open"
-external tdb_cons_add: tdb_cons -> string -> timestamp -> field_value list -> unit = "ocaml_tdb_cons_add"
-external tdb_cons_finalize: tdb_cons -> unit = "ocaml_tdb_cons_finalize"
-external tdb_cons_append: tdb_cons -> tdb -> unit = "ocaml_tdb_cons_append"
+module Cons = struct
+  external open_w: path -> field_name list -> tdb_cons = "ocaml_tdb_cons_open"
+  external add: tdb_cons -> string -> timestamp -> field_value list -> unit = "ocaml_tdb_cons_add"
+  external finalize: tdb_cons -> unit = "ocaml_tdb_cons_finalize"
+  external append: tdb_cons -> tdb -> unit = "ocaml_tdb_cons_append"
+
+  let add tdb_cons uuid timestamp fields =
+    add tdb_cons (Uuidm.to_bytes uuid) timestamp fields
+end
+
 external tdb_open: path -> tdb = "ocaml_tdb_open"
 external tdb_dontneed: tdb -> unit = "ocaml_tdb_dontneed"
 external tdb_willneed: tdb -> unit = "ocaml_tdb_willneed"
@@ -94,9 +100,6 @@ external tdb_get_trail_length: tdb_cursor -> int64 = "ocaml_tdb_get_trail_length
 external tdb_cursor_next: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_next"
 external tdb_cursor_peek: tdb_cursor -> tdb_event option = "ocaml_tdb_cursor_peek"
 external tdb_error_str: error -> string = "ocaml_tdb_error_str"
-
-let tdb_cons_add tdb_cons uuid timestamp fields =
-  tdb_cons_add tdb_cons (Uuidm.to_bytes uuid) timestamp fields
 
 let tdb_get_uuid tdb trail_id =
   match tdb_get_uuid tdb trail_id with

@@ -24,18 +24,20 @@ type field_value = string
 (* Working with TraiDB constructors. *)
 (* --------------------------------- *)
 
-(* Open a new TrailDB. *)
-val tdb_cons_open: path -> field_name list -> tdb_cons
+module Cons : sig
+  (* Open a new TrailDB for writes. *)
+  val open_w: path -> field_name list -> tdb_cons
 
-(* Add an event to TrailDB. *)
-val tdb_cons_add: tdb_cons -> uuid -> timestamp -> field_value list -> unit
+  (* Add an event to TrailDB. *)
+  val add: tdb_cons -> uuid -> timestamp -> field_value list -> unit
 
-(* Finalize TrailDB construction, creating a valid TrailDB file *)
-val tdb_cons_finalize: tdb_cons -> unit
+  (* Finalize TrailDB construction, creating a valid TrailDB file *)
+  val finalize: tdb_cons -> unit
 
-(* Merge an existing TrailDB to this constructor.
-   The fields must be equal between the existing and the new TrailDB. *)
-val tdb_cons_append: tdb_cons -> tdb -> unit
+  (* Merge an existing TrailDB to this constructor.
+     The fields must be equal between the existing and the new TrailDB. *)
+  val append: tdb_cons -> tdb -> unit
+end
 
 (* --------------------------------- *)
 (* Working with read-only TraiDB.    *)
