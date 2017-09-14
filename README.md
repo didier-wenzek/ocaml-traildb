@@ -18,7 +18,7 @@ From source:
 
 ```sh
 $ make            # use jbuilder
-$ make test       # assuming kakfa is running at localhost:9092 with a 'test' topic.
+$ make test
 $ make install    # use opam
 ```
 
