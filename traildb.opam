@@ -1,16 +1,12 @@
 opam-version: "1.2"
 version: "0.1.0"
-name: "traildb"
-synopsis: "OCaml bindings for TrailDB&"
 maintainer: "Didier Wenzek <didier.wenzek@acidalie.com>"
 authors: ["Didier Wenzek <didier.wenzek@acidalie.com>"]
 homepage: "https://github.com/didier-wenzek/ocaml-traildb"
 bug-reports: "https://github.com/didier-wenzek/ocaml-traildb/issues"
 dev-repo: "https://github.com/didier-wenzek/ocaml-traildb"
-license: "GPL"
+license: "MIT"
 build: [
   ["jbuilder" "build" "--only" "traildb" "--root" "." "-j" jobs "@install"]
 ]
-install: [make "install"]
-remove: [make "uninstall"]
 depends: ["jbuilder" "uuidm"]
