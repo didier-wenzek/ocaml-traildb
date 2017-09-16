@@ -68,6 +68,7 @@ static int const ERROR_CODES[] = {
 
 static int const ERR_UNKNOWN = (sizeof ERROR_CODES) / (sizeof ERROR_CODES[0]);
 
+static CAMLprim
 void raise_exception(tdb_error err)
 {
   CAMLparam0();
@@ -87,7 +88,7 @@ void raise_exception(tdb_error err)
     }
   }
 
-  if (i < ERR_UNKNOWN) caml_raise_constant(Val_int(i));
+  if (i < ERR_UNKNOWN) caml_raise_with_arg(*exception_handler, Val_int(i));
   else caml_failwith("Internal error: unknown traildb error code");
 
   CAMLnoreturn;

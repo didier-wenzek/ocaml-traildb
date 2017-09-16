@@ -30,9 +30,19 @@ let check_single_trail test_ctxt =
     assert_equal 5L (traildb_num_events file);
     assert_equal (Some trail_events) (traildb_trail file trail)
 
+let creating_a_known_file test_ctxt =
+  assert_raises TrailDB.(Error TDB_ERR_IO_OPEN)
+  (fun () -> create_traildb (Filename.temp_file "traildb_" "_test") ["a"] [])
+
+let opening_an_unknown_file test_ctxt =
+  assert_raises TrailDB.(Error TDB_ERR_IO_OPEN)
+  (fun () -> traildb_num_trails "/foo")
+
 let suite = "tests">:::[
-  ("check_empty_db" >:: check_empty_db);
-  ("check_single_trail" >:: check_single_trail);
+  "check_empty_db" >:: check_empty_db;
+  "check_single_trail" >:: check_single_trail;
+  "creating_a_known_file" >:: creating_a_known_file;
+  "opening_an_unknown_file" >:: opening_an_unknown_file;
 ]
 
 let () =                                                                                                                                                                                                           
