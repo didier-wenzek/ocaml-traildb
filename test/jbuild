@@ -2,7 +2,7 @@
 
 (executables
  ((names (tests))
-  (libraries (traildb))))
+  (libraries (traildb oUnit))))
 
 (alias
  ((name    runtest)
