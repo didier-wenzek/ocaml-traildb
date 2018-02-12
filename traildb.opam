@@ -14,5 +14,7 @@ depends: [
   "oUnit"  {test}
 ]
 depexts: [
-  [[ "debian"] ["libtraildb-dev"]]
+  [["debian"] ["libtraildb-dev"]]
+  [["homebrew"] ["traildb"]]
+  [["ubuntu"] ["libtraildb-dev"]]
 ]
