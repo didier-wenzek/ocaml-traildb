@@ -72,7 +72,7 @@ static CAMLprim
 void raise_exception(tdb_error err)
 {
   CAMLparam0();
-  static value *exception_handler = NULL;
+  static const value *exception_handler = NULL;
 
   if (exception_handler == NULL) {
     exception_handler = caml_named_value("traildb.error");
