@@ -2,6 +2,6 @@
  (name TrailDB)
  (public_name traildb)
  (libraries uuidm)
- (flags -ccopt -static -ccopt -fPIC)
+ (c_flags -static -fPIC)
  (c_names ocaml_traildb)
  (c_library_flags -ltraildb))

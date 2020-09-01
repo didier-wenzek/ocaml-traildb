@@ -114,5 +114,5 @@ module Filter = struct
   type disjunction = Or of literal list
   type conjunction = And of disjunction list
 
-  let create conjunction = raise (Invalid_argument "TODO")
+  let create _conjunction = raise (Invalid_argument "TODO")
 end

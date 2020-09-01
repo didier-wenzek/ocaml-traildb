@@ -6,7 +6,7 @@ let insert_event db = function
     let time = Int64.of_string timestamp in
     TrailDB.Cons.add db uuid time values;
     db
-  | trail::_ -> raise (Invalid_argument "missing timestamp")
+  | _trail::_ -> raise (Invalid_argument "missing timestamp")
   | _ -> raise (Invalid_argument "missing uuid and timestamp")
 
 let create_traildb ~file ~fields ~events =
